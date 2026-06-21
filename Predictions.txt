@@ -1,0 +1,6 @@
+Happy songs (high Valence) are more popular.
+High-energy songs are more popular.
+Explicit songs get more popularity.
+Modern songs are shorter than old songs.
+Tempo affects popularity.
+Danceability strongly impacts popularity.
