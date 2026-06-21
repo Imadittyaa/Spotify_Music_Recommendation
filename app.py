@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics.pairwise import cosine_similarity
 
-# --- 1. PAGE CONFIGURATION & STYLING ---
+# --- PAGE CONFIGURATION & STYLING ---
 st.set_page_config(
     page_title="Global Spotify Recommendation Engine",
     page_icon="🎵",
@@ -27,7 +27,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 
-# --- 2. RECOMMENDATION ENGINE CLASS ---
+# --- RECOMMENDATION ENGINE CLASS ---
 class SpotifyRecommendationEngine:
     def __init__(self, df):
         self.df = df.copy().reset_index(drop=True)
@@ -65,24 +65,39 @@ class SpotifyRecommendationEngine:
         
         return top_matches[['id', 'name', 'artists', 'year', 'similarity_score']]
 
+# --- DYNAMIC DATA SELECTION PIPELINE ---
 
-# --- 3. DATA LOADING PIPELINE ---
-@st.cache_data # Caches data in memory so it doesn't re-run on every user click
-def load_data():
-    # Replace 'spotify_songs.csv' with your local dataset path
-    # Example mock structure to ensure compatibility with your localized metadata
-    try:
-        file=st.file_uploader("Upload your csv file :",type='csv')
+st.sidebar.markdown("### 📊 Data Source Selection")
+
+data_choice = st.sidebar.radio(
+    "Do you have your own Spotify dataset?",
+    options=[YES,NO]
+)
+
+file = None
+
+if data_choice == "YES":
+    file = st.sidebar.file_uploader("Upload your Spotify Dataset (CSV)", type=['csv'])
+else:
+    file='Spotify_songs.csv'
+    
+# --- DATA LOADING PIPELINE ---
+@st.cache_data 
+def load_data(file,choice):
+    if choice == "YES" and file is not None:
         df = pd.read_csv(file)
-    except FileNotFoundError:
-        # Fallback dummy generator for development demo purposes
-        st.warning("⚠️ 'spotify_songs.csv' not found. Generating standardized multilingual demo dataset.")
+        st.success("🎉 Custom dataset successfully loaded into vector memory!")
+    else:
+        try:
+            df = pd.read_csv(file)
+        except FileNotFoundError:
+            st.warning("⚠️ Default 'Spotify_songs.csv' not found. Please upload a file manually.")
     return df
 
-df = load_data()
+df = load_data(file,data_choice)
 engine = SpotifyRecommendationEngine(df)
 
-# --- 4. STREAMLIT UI DESIGN ---
+# --- STREAMLIT UI DESIGN ---
 st.title("🎵 Vector-Based Multilingual Spotify Recommendation Engine")
 st.write("Discover music across borders based on mathematical audio geometry.")
 
@@ -117,7 +132,7 @@ if not matching_tracks.empty:
     st.sidebar.subheader("Cross-Border Constraints")
     num_recommendations = st.sidebar.slider("Number of songs to generate", 3, 10, 5)
 
-    # --- 5. EXECUTE VECTOR MATCHING ACTION ---
+    # --- EXECUTE VECTOR MATCHING ACTION ---
     if st.sidebar.button("Generate Sound-Alikes"):
         st.subheader(f"🎧 Closest Audio Matches for '{selected_song_name}'")
         
