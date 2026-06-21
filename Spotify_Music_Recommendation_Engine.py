@@ -71,7 +71,7 @@ st.sidebar.markdown("### 📊 Data Source Selection")
 
 data_choice = st.sidebar.radio(
     "Do you have your own Spotify dataset?",
-    options=[YES,NO]
+    options=['YES','NO']
 )
 
 file = None
