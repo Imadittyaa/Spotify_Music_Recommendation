@@ -78,8 +78,6 @@ file = None
 
 if data_choice == "YES":
     file = st.sidebar.file_uploader("Upload your Spotify Dataset (CSV)", type=['csv'])
-else:
-    file='Spotify_songs.csv'
     
 # --- DATA LOADING PIPELINE ---
 @st.cache_data 
@@ -89,7 +87,7 @@ def load_data(file,choice):
         st.success("🎉 Custom dataset successfully loaded into vector memory!")
     else:
         try:
-            df = pd.read_csv(file)
+            df = pd.read_csv('Spotify_songs.csv')
         except FileNotFoundError:
             st.warning("⚠️ Default 'Spotify_songs.csv' not found. Please upload a file manually.")
     return df
